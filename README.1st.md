@@ -16,12 +16,12 @@ from this repository.
 
 Though this repository will trail behind the latest upstream development,
 it is kept in sync with the requirements of the latest version of the
-[KCRI CGE Bacterial Analysis Pipeline](https://github.com/zwets/kcri-cge-bap).
+[KCRI CGE Bacterial Analysis Pipeline](https://github.com/kcri-tz/kcri-cge-bap).
 
 #### Rationale
 
 The reason for maintaining this repository (and the other slimmed down
-repos at <https://git.kcri.it/mini-cge>) is that several CGE services, due
+repos at <https://github.com/kcri-tz/>) is that several CGE services, due
 to spurious binary commits in the past, have huge git histories.
 
 Cloning the standard services for the BAP adds up to a whopping 1.6GB
