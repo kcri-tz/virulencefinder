@@ -9,7 +9,7 @@ and version tags mirror the upstream tags, with a fourth decimal added to
 indicate the exact commit that was copied over:
 
     $ git describe (upstream)  →  $ git describe (here)
-    3.0.2-6-g6dfe              →  3.0.2.6  (6th commit after 3.0.2)
+    2.0.3-11-g5cf8             →  2.0.3.11 (11th commit after 2.0.3)
 
 Note that test data and other extraneous upstream files are omitted
 from this repository.
