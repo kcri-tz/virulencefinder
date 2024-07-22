@@ -1,50 +1,47 @@
-FROM debian:stretch
+FROM python:3.10-slim-bullseye
 
+ENV INSIDE_DOCKER true
 ENV DEBIAN_FRONTEND noninteractive
 
-### RUN set -ex; \
-
 RUN apt-get update -qq; \
-    apt-get install -y -qq git \
-    apt-utils \
+    apt-get install --no-install-recommends -y -qq git \
+    build-essential \
     wget \
-    python3-pip \
     ncbi-blast+ \
     libz-dev \
+    procps \
     ; \
     rm -rf /var/cache/apt/* /var/lib/apt/lists/*;
 
-ENV DEBIAN_FRONTEND Teletype
-
-# Install python dependencies
-RUN pip3 install -U biopython==1.73 tabulate cgecore==1.4.2;
-
-# Install kma
-RUN git clone --branch 1.0.1 --depth 1 https://bitbucket.org/genomicepidemiology/kma.git; \
+# Install KMA
+RUN cd /usr/src/; \
+    git clone --depth 1 -b 1.4.11 https://bitbucket.org/genomicepidemiology/kma.git; \
     cd kma && make; \
-    mv kma* /bin/
+    mv kma /usr/bin/; \
+    cd ..; \
+    rm -rf kma/;
 
-COPY virulencefinder.py /usr/src/virulencefinder.py
+ENV VIRULENCEFINDER_VERSION 3.0.1
 
-# TEST setup
-RUN mkdir /database /test
-COPY test/database/ /database/
-COPY test/test* test/
-COPY virulencefinder.py /usr/src/virulencefinder.py
+# Install VirulenceFinder
+RUN pip install --no-cache-dir virulencefinder==$VIRULENCEFINDER_VERSION
 
-RUN chmod 755 /usr/src/virulencefinder.py; \
-    chmod 755 test/test.sh
+# Install database
+RUN cd /; \
+    mkdir databases; \
+    cd /databases/; \
+    git clone -b virulencefinder-$VIRULENCEFINDER_VERSION --depth 1 https://git@bitbucket.org/genomicepidemiology/virulencefinder_db.git; \
+    cd /databases/virulencefinder_db; \
+    python INSTALL.py; \
+    rm -rf .git;
 
-ENV PATH $PATH:/usr/src
-# Setup .bashrc file for convenience during debugging
-RUN echo "alias ls='ls -h --color=tty'\n"\
-"alias ll='ls -lrt'\n"\
-"alias l='less'\n"\
-"alias du='du -hP --max-depth=1'\n"\
-"alias cwd='readlink -f .'\n"\
-"PATH=$PATH\n">> ~/.bashrc
+# Setup environment
+RUN cd /; \
+    mkdir app;
+WORKDIR /app
 
-WORKDIR /workdir
+# Environmental variables
+ENV CGE_VIRULENCEFINDER_DB /databases/virulencefinder_db/
 
 # Execute program when running the container
-ENTRYPOINT ["/usr/src/virulencefinder.py"]
+ENTRYPOINT ["python", "-m", "virulencefinder"]
