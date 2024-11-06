@@ -80,7 +80,7 @@ if __name__ == "__main__":
         infiles = conf.inputfasta
         file_format = "fasta"
     else:
-        infiles = ", ".join([conf.inputfastq_1, conf.inputfastq_2])
+        infiles = ", ".join(filter(None, [conf.inputfastq_1, conf.inputfastq_2]))
         file_format = "fastq"
 
     result_file, json_results = json_old(args,

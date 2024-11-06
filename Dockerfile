@@ -21,7 +21,7 @@ RUN cd /usr/src/; \
     cd ..; \
     rm -rf kma/;
 
-ENV VIRULENCEFINDER_VERSION 3.0.1
+ENV VIRULENCEFINDER_VERSION 3.0.2
 
 # Install VirulenceFinder
 RUN pip install --no-cache-dir virulencefinder==$VIRULENCEFINDER_VERSION
